@@ -111,6 +111,7 @@ app.get("/getposts", (req, res) => {
     if (err) throw err;
     console.log(results);
     res.send("Posts Data Fetched...");
+    // res.status(200).json(result);
   });
 });
 
@@ -124,6 +125,7 @@ app.get("/getpost/:id", (req, res) => {
   });
 });
 
+//Delete Post
 app.get("/deletepost/:id", (req, res) => {
   let sql = `DELETE FROM posts WHERE id = ${req.params.id}`;
   db.query(sql, (err, results) => {
@@ -132,4 +134,45 @@ app.get("/deletepost/:id", (req, res) => {
     res.send("Post deleted...");
   });
 });
+
+//Update Post
+app.get("/update/:id", (req, res) => {
+  let newTitle = "updated title";
+  let newDesc = "updated DESC";
+  let postauthor = "updated post author name";
+  let newCreatedDate = newdate;
+  let newUpdatedDate = newdate;
+
+  let sql = `UPDATE posts SET title = '${newTitle}', description = '${newDesc}', postauthor = '${postauthor}', createddate='${newCreatedDate}',updateddate='${newUpdatedDate}' WHERE id=${req.params.id}`;
+  db.query(sql, (err, results) => {
+    if (err) throw err;
+    console.log(results);
+    res.send("Post updated successfully...");
+  });
+});
+
+//update ....
+app.get("/updatepost/:id", (req, res) => {
+  let id = req.params.id;
+  let post = req.body;
+  let sql =
+    "UPDATE posts SET title=?, description=?, postauthor=?, createddate=?,updateddate=? WHERE id=?";
+  db.query(
+    sql,
+    [
+      post.title,
+      post.description,
+      post.postauthor,
+      post.createddate,
+      post.updateddate,
+      id,
+    ],
+    (err, results) => {
+      if (err) throw err;
+      console.log(results);
+      res.send("Post updated successfully...");
+    }
+  );
+});
+
 app.listen("3000", () => console.log("Server is running on port 3000"));
