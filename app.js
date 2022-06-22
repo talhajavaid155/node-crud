@@ -1,36 +1,135 @@
 const express = require("express");
+
 const mysql = require("mysql");
+
+// connection configurations
+
+const db = mysql.createConnection({
+  host: "localhost",
+
+  port: 3306,
+
+  user: "root",
+
+  password: "",
+
+  database: "crud",
+
+  insecureAuth: true,
+
+  multipleStatements: true,
+});
 
 const app = express();
 
-//create connection
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "0098bscs17",
-  database: "crud",
-  insecureAuth: true,
+let newdate = new Date();
+// connect to database
+db.connect((err) => {
+  if (err) {
+    throw err;
+  }
+  console.log("MySQL Connected...");
 });
 
 // create db
-// app.get("/createdb", (req, res) => {
-//   let sql = "CREATE DATABASE crud";
-//   db.query(sql, (err, result) => {
-//     if (err) {
-//       console.log("error", err);
-//     }
-//     console.log(result);
-//     res.send("Database Created...");
-//   });
-// });
-
-// connect
-db.connect((err) => {
-  if (err) {
-    console.log("error");
-  } else console.log("MySql Connected...");
+app.get("/createdb", (req, res) => {
+  let sql = "CREATE DATABASE crud";
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.log("error", err);
+    }
+    console.log(result);
+    res.send("Database Created...");
+  });
 });
 
-app.listen("3000", () => {
-  console.log("Port 3000 is running...");
+//create post table
+app.get("/createpoststable", (req, res) => {
+  let sql =
+    "CREATE TABLE posts(id int AUTO_INCREMENT, title VARCHAR(30), description VARCHAR(100), postauthor VARCHAR(50), createddate date, updateddate date, PRIMARY KEY(id))";
+  db.query(sql, (err, result) => {
+    if (err) throw err;
+    console.log(result);
+    res.send("Posts table created...");
+  });
 });
+
+// Insert Post row data
+
+app.get("/addpost1", (req, res) => {
+  let post = {
+    title: "post1",
+    description: "post 1 description",
+    postauthor: "XYZ author1",
+    createddate: newdate,
+    updateddate: newdate,
+  };
+  let sql = "INSERT INTO posts SET ?";
+  db.query(sql, post, (err, result) => {
+    if (err) throw err;
+    console.log(result);
+    res.send("Post 1 Added...");
+  });
+});
+
+app.get("/addpost2", (req, res) => {
+  let post = {
+    title: "post2",
+    description: "post 2 description",
+    postauthor: "XYZ author222",
+    createddate: newdate,
+    updateddate: newdate,
+  };
+  let sql = "INSERT INTO posts SET ?";
+  db.query(sql, post, (err, result) => {
+    if (err) throw err;
+    console.log(result);
+    res.send("Post 2 Added...");
+  });
+});
+
+app.get("/addpost3", (req, res) => {
+  let post = {
+    title: "post3",
+    description: "post 3 description",
+    postauthor: "XYZ author3",
+    createddate: newdate,
+    updateddate: newdate,
+  };
+  let sql = "INSERT INTO posts SET ?";
+  db.query(sql, post, (err, result) => {
+    if (err) throw err;
+    console.log(result);
+    res.send("Post 3 Added...");
+  });
+});
+
+// Read Data
+app.get("/getposts", (req, res) => {
+  let sql = "SELECT * FROM posts";
+  db.query(sql, (err, results) => {
+    if (err) throw err;
+    console.log(results);
+    res.send("Posts Data Fetched...");
+  });
+});
+
+// Select Single Post
+app.get("/getpost/:id", (req, res) => {
+  let sql = `SELECT * FROM posts WHERE id = ${req.params.id}`;
+  db.query(sql, (err, results) => {
+    if (err) throw err;
+    console.log(results);
+    res.send("Post Fetched...");
+  });
+});
+
+app.get("/deletepost/:id", (req, res) => {
+  let sql = `DELETE FROM posts WHERE id = ${req.params.id}`;
+  db.query(sql, (err, results) => {
+    if (err) throw err;
+    console.log(results);
+    res.send("Post deleted...");
+  });
+});
+app.listen("3000", () => console.log("Server is running on port 3000"));
