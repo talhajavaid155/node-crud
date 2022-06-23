@@ -21,6 +21,8 @@ const db = mysql.createConnection({
 });
 
 const app = express();
+const bodyparser = require("body-parser");
+app.use(bodyparser.json());
 
 let newdate = new Date();
 // connect to database
@@ -135,7 +137,7 @@ app.get("/deletepost/:id", (req, res) => {
   });
 });
 
-//Update Post
+//Update Post hardcoded
 app.get("/update/:id", (req, res) => {
   let newTitle = "updated title";
   let newDesc = "updated DESC";
@@ -151,26 +153,52 @@ app.get("/update/:id", (req, res) => {
   });
 });
 
-//update ....
-app.get("/updatepost/:id", (req, res) => {
-  let id = req.params.id;
+//INSERT/POST
+app.post("/insertposts", (req, res) => {
   let post = req.body;
-  let sql =
-    "UPDATE posts SET title=?, description=?, postauthor=?, createddate=?,updateddate=? WHERE id=?";
+  var sql =
+    "SET @id = ?;SET @title = ?;SET @description = ?;SET @postauthor = ?;SET @createddate = ?;SET @updateddate = ?;\
+     CALL postAddOrEdit(@id,@title,@description,@postauthor,@createddate,@updateddate);";
   db.query(
     sql,
     [
+      post.id,
       post.title,
       post.description,
       post.postauthor,
       post.createddate,
       post.updateddate,
-      id,
     ],
-    (err, results) => {
-      if (err) throw err;
-      console.log(results);
-      res.send("Post updated successfully...");
+    (err, rows, fields) => {
+      if (!err)
+        rows.forEach((element) => {
+          if (element.constructor == Array)
+            res.send("New Post ID : " + element[0].id);
+        });
+      else console.log(err);
+    }
+  );
+});
+
+//update/POST
+app.put("/updateposts", (req, res) => {
+  let post = req.body;
+  var sql =
+    "SET @id = ?;SET @title = ?;SET @description = ?;SET @postauthor = ?;SET @createddate = ?;SET @updateddate = ?;\
+     CALL postAddOrEdit(@id,@title,@description,@postauthor,@createddate,@updateddate);";
+  db.query(
+    sql,
+    [
+      post.id,
+      post.title,
+      post.description,
+      post.postauthor,
+      post.createddate,
+      post.updateddate,
+    ],
+    (err, rows, fields) => {
+      if (!err) res.send("Post Updated");
+      else console.log(err);
     }
   );
 });
