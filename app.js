@@ -119,7 +119,6 @@ app.get("/updateuser/:id", (req, res) => {
 // ADD USER
 app.post("/users", (req, res) => {
   let user = req.body;
-
   let sql =
     "SET @id = ?;SET @first_name = ?;SET @last_name = ?;SET @email = ?; SET @password = ?; SET @date_of_birth = ?; SET @created_date = ?;  SET @updated_date = ?;\
   CALL UserAddOrEdit(@id,@first_name,@last_name,@email,@password,@date_of_birth,@created_date,@updated_date);";
