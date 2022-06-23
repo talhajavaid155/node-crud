@@ -1,6 +1,5 @@
 const express = require("express");
 const mysql = require("mysql");
-
 // connection configurations
 const db = mysql.createConnection({
   host: "localhost",
@@ -13,6 +12,8 @@ const db = mysql.createConnection({
 });
 
 const app = express();
+const bodyparser = require("body-parser");
+app.use(bodyparser.json());
 
 app.listen("3000", () => console.log("Server is running on port 3000"));
 // connect to database
@@ -180,7 +181,7 @@ app.put("/users", (req, res) => {
 });
 
 // Delete user
-app.delete("/deleteUser/:id", (req, res) => {
+app.delete("/deleteuser/:id", (req, res) => {
   let id = req.params.id;
   let sql = `DELETE  FROM users WHERE id=${id}`;
   let query = db.query(sql, (err, result) => {
